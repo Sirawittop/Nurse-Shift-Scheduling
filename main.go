@@ -143,8 +143,8 @@ func main() {
 	db.Find(&users)
 	db.Find(&logins)
 
-	// insertUser(db, "Sirawittop", "top202ueo546", 1)
-	// updateUser(db, 6, "Trin", "tep202546", 1)
+	// insertUser(db, "Sirawittop", "121234242ouoeuoeuoeu", 1)
+	// updateUser(db, 6, "Trin", "tennh13434314134134nt13h4s6", 1)
 	// insertUser(db, 1, 1, 7, 1, "สิรวิชญ์", "คำชุ่ม", "ชาย", "0996633516", "sirawit.code@gmail.com", time.Now().Format("2006-01-02"))
 	// Display the retrieved logins data
 
