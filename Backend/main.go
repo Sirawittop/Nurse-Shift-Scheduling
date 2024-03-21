@@ -7,6 +7,8 @@ import (
 	"os"
 	"time"
 
+	"nurse/model"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
 	"github.com/joho/godotenv"
@@ -18,161 +20,64 @@ import (
 var db *gorm.DB
 var secretKey = []byte("secret-key")
 
-type Hospitals struct {
-	gorm.Model
-	ID      uint `gorm:"primaryKey;autoIncrement;not null"`
-	Name    string
-	Address string
-	Phone   string
-}
-
-type Login struct {
-	gorm.Model
-	ID       uint `gorm:"primaryKey;autoIncrement;not null"`
-	Username string
-	Password string
-	RoleID   uint
-}
-
-type NurseLevel struct {
-	gorm.Model
-	ID    uint `gorm:"primaryKey;autoIncrement;not null"`
-	Level string
-}
-
-type OTs struct {
-	gorm.Model
-	ID           uint `gorm:"primaryKey;autoIncrement;not null"`
-	Name         string
-	Hospitals_id uint
-	Ward_id      uint
-	Morning      uint
-	Afternoon    uint
-	Night        uint
-}
-
-type Plans struct {
-	gorm.Model
-	ID           uint `gorm:"primaryKey;autoIncrement;not null"`
-	Hospitals_id uint
-	Ward_id      uint
-	Nurse_id     uint
-	OT_id        uint
-	Day1         uint
-	Day2         uint
-	Day3         uint
-	Day4         uint
-	Day5         uint
-	Day6         uint
-	Day7         uint
-	Day8         uint
-	Day9         uint
-	Day10        uint
-	Day11        uint
-	Day12        uint
-	Day13        uint
-	Day14        uint
-	Day15        uint
-	Day16        uint
-	Day17        uint
-	Day18        uint
-	Day19        uint
-	Day20        uint
-	Day21        uint
-	Day22        uint
-	Day23        uint
-	Day24        uint
-	Day25        uint
-	Day26        uint
-	Day27        uint
-	Day28        uint
-	Day29        uint
-	Day30        uint
-	Day31        uint
-}
-
-type Plantypes struct {
-	gorm.Model
-	ID         uint `gorm:"primaryKey;autoIncrement;not null"`
-	Type       string
-	Morning    bool
-	Afternoon  bool
-	Night      bool
-	X          bool
-	V          bool
-	Nleave     bool
-	C          bool
-	Part       bool
-	Otm        bool
-	Ota        bool
-	Otn        bool
-	StatusS    bool
-	StatusOT8  bool
-	StatusOT12 bool
-}
-
-type Roles struct {
-	gorm.Model
-	ID   uint `gorm:"primaryKey;autoIncrement;not null"`
-	Name string
-}
-
-type User struct {
-	gorm.Model
-	ID              uint `gorm:"primaryKey;autoIncrement;not null"`
-	Hospital_id     uint
-	Ward_id         uint
-	Login_id        uint
-	Nurse_level     uint
-	Firstname       string
-	Lastname        string
-	Gender          string
-	Phone           string
-	Email           string
-	Employment_year string
-}
-
-type Wards struct {
-	gorm.Model
-	ID           uint `gorm:"primaryKey;autoIncrement;not null"`
-	Hospitals_id uint
-	Name         string
-}
-
 // CRUD Hospital
-func insertHospital(name string, address string, phone string) {
-	newHospital := Hospitals{
-		Name:    name,
-		Address: address,
-		Phone:   phone,
+func getHospitals(c *fiber.Ctx) error {
+	var hospitals []model.Hospitals
+	result := db.Find(&hospitals)
+	if result.Error != nil {
+		log.Fatalf("Failed to get hospitals: %v", result.Error)
 	}
-	result := db.Create(&newHospital)
+	return c.JSON(hospitals)
+}
+
+func insertHospital(c *fiber.Ctx) error {
+	var hospital model.Hospitals
+	if err := c.BodyParser(&hospital); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request payload"})
+	}
+
+	// Insert hospital
+	result := db.Create(&hospital)
 	if result.Error != nil {
 		log.Fatalf("Failed to insert New Hospital: %v", result.Error)
 	}
+	return c.JSON(hospital)
 }
 
-func updateHospital(id uint, name string, address string, phone string) {
-	updatedHospital := Hospitals{
-		Name:    name,
-		Address: address,
-		Phone:   phone,
+func updateHospital(c *fiber.Ctx) error {
+	var hospital model.Hospitals
+	if err := c.BodyParser(&hospital); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request payload"})
 	}
-	result := db.Model(&Hospitals{}).Where("id = ?", id).Updates(&updatedHospital)
+
+	// Update hospital
+	result := db.Model(&model.Hospitals{}).Where("id = ?", hospital.ID).Updates(&hospital)
 	if result.Error != nil {
 		log.Fatalf("Failed to Update Hospital: %v", result.Error)
 	}
+	return c.JSON(hospital)
 }
 
-func deleteHospital(id uint) {
-	// Delete hospital
-	result := db.Delete(&Hospitals{}, id)
+func deleteHospital(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var hospital model.Hospitals
+	result := db.Where("id = ?", id).Delete(&hospital)
 	if result.Error != nil {
 		log.Fatalf("Failed to delete hospital: %v", result.Error)
 	}
+	return c.SendString("Hospital successfully deleted")
 }
 
 // CRUD Login
+func getLogins(c *fiber.Ctx) error {
+	var logins []model.Login
+	result := db.Find(&logins)
+	if result.Error != nil {
+		log.Fatalf("Failed to get logins: %v", result.Error)
+	}
+	return c.JSON(logins)
+}
+
 func insertLogin(username string, password string, roleID uint) {
 	// Insert with encrypted password
 	hashedPassword, err := hashPassword(password)
@@ -180,7 +85,7 @@ func insertLogin(username string, password string, roleID uint) {
 		log.Fatalf("Failed to hash password: %v", err)
 	}
 
-	newLogin := Login{
+	newLogin := model.Login{
 		Username: username,
 		Password: hashedPassword,
 		RoleID:   roleID,
@@ -198,12 +103,12 @@ func updateLogin(id uint, username string, password string, roleID uint) {
 		log.Fatalf("Failed to hash password: %v", err)
 	}
 
-	updatedLogin := Login{
+	updatedLogin := model.Login{
 		Username: username,
 		Password: hashedPassword,
 		RoleID:   roleID,
 	}
-	result := db.Model(&Login{}).Where("id = ?", id).Updates(&updatedLogin)
+	result := db.Model(&model.Login{}).Where("id = ?", id).Updates(&updatedLogin)
 	if result.Error != nil {
 		log.Fatalf("Failed to Update Login: %v", result.Error)
 	}
@@ -211,15 +116,24 @@ func updateLogin(id uint, username string, password string, roleID uint) {
 
 func deleteLogin(id uint) {
 	// Delete user
-	result := db.Delete(&Login{}, id)
+	result := db.Delete(&model.Login{}, id)
 	if result.Error != nil {
 		log.Fatalf("Failed to delete login: %v", result.Error)
 	}
 }
 
 // CRUD NurseLevel
+func getNurseLevels(c *fiber.Ctx) error {
+	var nurseLevels []model.NurseLevel
+	result := db.Find(&nurseLevels)
+	if result.Error != nil {
+		log.Fatalf("Failed to get nurse levels: %v", result.Error)
+	}
+	return c.JSON(nurseLevels)
+}
+
 func insertNurseLevel(level string) {
-	newNurseLevel := NurseLevel{
+	newNurseLevel := model.NurseLevel{
 		Level: level,
 	}
 	result := db.Create(&newNurseLevel)
@@ -229,10 +143,10 @@ func insertNurseLevel(level string) {
 }
 
 func updateNurseLevel(id uint, level string) {
-	updatedNurseLevel := NurseLevel{
+	updatedNurseLevel := model.NurseLevel{
 		Level: level,
 	}
-	result := db.Model(&NurseLevel{}).Where("id = ?", id).Updates(&updatedNurseLevel)
+	result := db.Model(&model.NurseLevel{}).Where("id = ?", id).Updates(&updatedNurseLevel)
 	if result.Error != nil {
 		log.Fatalf("Failed to Update NurseLevel: %v", result.Error)
 	}
@@ -240,7 +154,7 @@ func updateNurseLevel(id uint, level string) {
 
 func deleteNurseLevel(id uint) {
 	// Delete user
-	result := db.Delete(&NurseLevel{}, id)
+	result := db.Delete(&model.NurseLevel{}, id)
 	if result.Error != nil {
 		log.Fatalf("Failed to delete nurse level: %v", result.Error)
 	}
@@ -248,7 +162,7 @@ func deleteNurseLevel(id uint) {
 
 // CRUD OT
 func insertOT(name string, Hospitals_id uint, Ward_id uint, Morning uint, Afternoon uint, Night uint) {
-	newOT := OTs{
+	newOT := model.OTs{
 		Name:         name,
 		Hospitals_id: Hospitals_id,
 		Ward_id:      Ward_id,
@@ -263,7 +177,7 @@ func insertOT(name string, Hospitals_id uint, Ward_id uint, Morning uint, Aftern
 }
 
 func updateOT(id uint, name string, Hospitals_id uint, Ward_id uint, Morning uint, Afternoon uint, Night uint) {
-	updatedOT := OTs{
+	updatedOT := model.OTs{
 		Name:         name,
 		Hospitals_id: Hospitals_id,
 		Ward_id:      Ward_id,
@@ -271,7 +185,7 @@ func updateOT(id uint, name string, Hospitals_id uint, Ward_id uint, Morning uin
 		Afternoon:    Afternoon,
 		Night:        Night,
 	}
-	result := db.Model(&OTs{}).Where("id = ?", id).Updates(&updatedOT)
+	result := db.Model(&model.OTs{}).Where("id = ?", id).Updates(&updatedOT)
 	if result.Error != nil {
 		log.Fatalf("Failed to Update OT: %v", result.Error)
 	}
@@ -279,7 +193,7 @@ func updateOT(id uint, name string, Hospitals_id uint, Ward_id uint, Morning uin
 
 func deleteOT(id uint) {
 	// Delete user
-	result := db.Delete(&OTs{}, id)
+	result := db.Delete(&model.OTs{}, id)
 	if result.Error != nil {
 		log.Fatalf("Failed to delete OT: %v", result.Error)
 	}
@@ -287,7 +201,7 @@ func deleteOT(id uint) {
 
 // CRUD Plan
 func insertPlan(Hospitals_id uint, Ward_id uint, Nurse_id uint, OT_id uint, Day1 uint, Day2 uint, Day3 uint, Day4 uint, Day5 uint, Day6 uint, Day7 uint, Day8 uint, Day9 uint, Day10 uint, Day11 uint, Day12 uint, Day13 uint, Day14 uint, Day15 uint, Day16 uint, Day17 uint, Day18 uint, Day19 uint, Day20 uint, Day21 uint, Day22 uint, Day23 uint, Day24 uint, Day25 uint, Day26 uint, Day27 uint, Day28 uint, Day29 uint, Day30 uint, Day31 uint) {
-	newPlan := Plans{
+	newPlan := model.Plans{
 		Hospitals_id: Hospitals_id,
 		Ward_id:      Ward_id,
 		Nurse_id:     Nurse_id,
@@ -331,7 +245,7 @@ func insertPlan(Hospitals_id uint, Ward_id uint, Nurse_id uint, OT_id uint, Day1
 }
 
 func updatePlan(id uint, Hospitals_id uint, Ward_id uint, Nurse_id uint, OT_id uint, Day1 uint, Day2 uint, Day3 uint, Day4 uint, Day5 uint, Day6 uint, Day7 uint, Day8 uint, Day9 uint, Day10 uint, Day11 uint, Day12 uint, Day13 uint, Day14 uint, Day15 uint, Day16 uint, Day17 uint, Day18 uint, Day19 uint, Day20 uint, Day21 uint, Day22 uint, Day23 uint, Day24 uint, Day25 uint, Day26 uint, Day27 uint, Day28 uint, Day29 uint, Day30 uint, Day31 uint) {
-	updatedPlan := Plans{
+	updatedPlan := model.Plans{
 		Hospitals_id: Hospitals_id,
 		Ward_id:      Ward_id,
 		Nurse_id:     Nurse_id,
@@ -368,7 +282,7 @@ func updatePlan(id uint, Hospitals_id uint, Ward_id uint, Nurse_id uint, OT_id u
 		Day30:        Day30,
 		Day31:        Day31,
 	}
-	result := db.Model(&Plans{}).Where("id = ?", id).Updates(&updatedPlan)
+	result := db.Model(&model.Plans{}).Where("id = ?", id).Updates(&updatedPlan)
 	if result.Error != nil {
 		log.Fatalf("Failed to Update Plan: %v", result.Error)
 	}
@@ -376,7 +290,7 @@ func updatePlan(id uint, Hospitals_id uint, Ward_id uint, Nurse_id uint, OT_id u
 
 func deletePlan(id uint) {
 	// Delete user
-	result := db.Delete(&Plans{}, id)
+	result := db.Delete(&model.Plans{}, id)
 	if result.Error != nil {
 		log.Fatalf("Failed to delete plan: %v", result.Error)
 	}
@@ -384,7 +298,7 @@ func deletePlan(id uint) {
 
 // CRUD Plantypes
 func insertPlantypes(Type string, Morning bool, Afternoon bool, Night bool, X bool, V bool, Nleave bool, C bool, Part bool, Otm bool, Ota bool, Otn bool, StatusS bool, StatusOT8 bool, StatusOT12 bool) {
-	newPlantypes := Plantypes{
+	newPlantypes := model.Plantypes{
 		Type:       Type,
 		Morning:    Morning,
 		Afternoon:  Afternoon,
@@ -408,7 +322,7 @@ func insertPlantypes(Type string, Morning bool, Afternoon bool, Night bool, X bo
 }
 
 func updatePlantypes(id uint, Type string, Morning bool, Afternoon bool, Night bool, X bool, V bool, Nleave bool, C bool, Part bool, Otm bool, Ota bool, Otn bool, StatusS bool, StatusOT8 bool, StatusOT12 bool) {
-	updatedPlantypes := Plantypes{
+	updatedPlantypes := model.Plantypes{
 		Type:       Type,
 		Morning:    Morning,
 		Afternoon:  Afternoon,
@@ -425,7 +339,7 @@ func updatePlantypes(id uint, Type string, Morning bool, Afternoon bool, Night b
 		StatusOT8:  StatusOT8,
 		StatusOT12: StatusOT12,
 	}
-	result := db.Model(&Plantypes{}).Where("id = ?", id).Updates(&updatedPlantypes)
+	result := db.Model(&model.Plantypes{}).Where("id = ?", id).Updates(&updatedPlantypes)
 	if result.Error != nil {
 		log.Fatalf("Failed to Update Plantypes: %v", result.Error)
 	}
@@ -433,7 +347,7 @@ func updatePlantypes(id uint, Type string, Morning bool, Afternoon bool, Night b
 
 func deletePlantypes(id uint) {
 	// Delete user
-	result := db.Delete(&Plantypes{}, id)
+	result := db.Delete(&model.Plantypes{}, id)
 	if result.Error != nil {
 		log.Fatalf("Failed to delete plantypes: %v", result.Error)
 	}
@@ -441,7 +355,7 @@ func deletePlantypes(id uint) {
 
 // CRUD Roles
 func insertRole(name string) {
-	newRole := Roles{
+	newRole := model.Roles{
 		Name: name,
 	}
 	result := db.Create(&newRole)
@@ -451,10 +365,10 @@ func insertRole(name string) {
 }
 
 func updateRole(id uint, name string) {
-	updatedRole := Roles{
+	updatedRole := model.Roles{
 		Name: name,
 	}
-	result := db.Model(&Roles{}).Where("id = ?", id).Updates(&updatedRole)
+	result := db.Model(&model.Roles{}).Where("id = ?", id).Updates(&updatedRole)
 	if result.Error != nil {
 		log.Fatalf("Failed to Update Role: %v", result.Error)
 	}
@@ -462,7 +376,7 @@ func updateRole(id uint, name string) {
 
 func deleteRole(id uint) {
 	// Delete user
-	result := db.Delete(&Roles{}, id)
+	result := db.Delete(&model.Roles{}, id)
 	if result.Error != nil {
 		log.Fatalf("Failed to delete role: %v", result.Error)
 	}
@@ -470,7 +384,7 @@ func deleteRole(id uint) {
 
 // CRUD User
 func insertUser(Hospital_id int, Ward_id int, Login_id int, Nurse_level int, Firstname string, Lastname string, Gender string, Phone string, Email string, Employment_year string) {
-	newUser := User{
+	newUser := model.User{
 		Hospital_id:     uint(Hospital_id),
 		Ward_id:         uint(Ward_id),
 		Login_id:        uint(Login_id),
@@ -489,7 +403,7 @@ func insertUser(Hospital_id int, Ward_id int, Login_id int, Nurse_level int, Fir
 }
 
 func updateUser(id uint, Hospital_id int, Ward_id int, Login_id int, Nurse_level int, Firstname string, Lastname string, Gender string, Phone string, Email string, Employment_year string) {
-	updatedUser := User{
+	updatedUser := model.User{
 		Hospital_id:     uint(Hospital_id),
 		Ward_id:         uint(Ward_id),
 		Login_id:        uint(Login_id),
@@ -501,7 +415,7 @@ func updateUser(id uint, Hospital_id int, Ward_id int, Login_id int, Nurse_level
 		Email:           Email,
 		Employment_year: Employment_year,
 	}
-	result := db.Model(&User{}).Where("id = ?", id).Updates(&updatedUser)
+	result := db.Model(&model.User{}).Where("id = ?", id).Updates(&updatedUser)
 	if result.Error != nil {
 		log.Fatalf("Failed to Update User: %v", result.Error)
 	}
@@ -509,7 +423,7 @@ func updateUser(id uint, Hospital_id int, Ward_id int, Login_id int, Nurse_level
 
 func deleteUser(id uint) {
 	// Delete user
-	result := db.Delete(&User{}, id)
+	result := db.Delete(&model.User{}, id)
 	if result.Error != nil {
 		log.Fatalf("Failed to delete user: %v", result.Error)
 	}
@@ -517,7 +431,7 @@ func deleteUser(id uint) {
 
 // CRUD Ward
 func insertWard(Hospitals_id int, Name string) {
-	newWard := Wards{
+	newWard := model.Wards{
 		Hospitals_id: uint(Hospitals_id),
 		Name:         Name,
 	}
@@ -528,11 +442,11 @@ func insertWard(Hospitals_id int, Name string) {
 }
 
 func updateWard(id uint, Hospitals_id int, Name string) {
-	updatedWard := Wards{
+	updatedWard := model.Wards{
 		Hospitals_id: uint(Hospitals_id),
 		Name:         Name,
 	}
-	result := db.Model(&Wards{}).Where("id = ?", id).Updates(&updatedWard)
+	result := db.Model(&model.Wards{}).Where("id = ?", id).Updates(&updatedWard)
 	if result.Error != nil {
 		log.Fatalf("Failed to Update Ward: %v", result.Error)
 	}
@@ -540,7 +454,7 @@ func updateWard(id uint, Hospitals_id int, Name string) {
 
 func deleteWard(id uint) {
 	// Delete ward
-	result := db.Delete(&Wards{}, id)
+	result := db.Delete(&model.Wards{}, id)
 	if result.Error != nil {
 		log.Fatalf("Failed to delete ward: %v", result.Error)
 	}
@@ -576,28 +490,30 @@ func main() {
 		panic("failed to connect database")
 	}
 
-	insertHospital("โรงพยาบาลมหาวิทยาลัยพะเยา", "19/1 หมู่ 2 ถ.พหลโยธิน ต.แม่กา อ.เมืองพะเยา จ.พะเยา 56000", "+66-5446-6758")
-
-	// app := fiber.New()
+	app := fiber.New()
 
 	// app.Post("/login", loginHandler)
 	// app.Get("/protected", protectedHandler)
 
-	// fmt.Println("Starting the server on localhost:5555")
-	// err = app.Listen(":5555")
-	// if err != nil {
-	// 	fmt.Println("Could not start the server", err)
-	// }
+	app.Get("/", getHospitals)
+	app.Post("/", insertHospital)
+
+	fmt.Println("Starting the server on localhost:5555")
+
+	err = app.Listen(":5555")
+	if err != nil {
+		fmt.Println("Could not start the server", err)
+	}
 }
 
 func loginHandler(c *fiber.Ctx) error {
-	var u Login
+	var u model.Login
 	if err := c.BodyParser(&u); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request payload"})
 	}
 
 	// Query the database to check if the username exists
-	var user Login
+	var user model.Login
 	if err := db.Where("username = ?", u.Username).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.Status(fiber.StatusUnauthorized).SendString("Invalid Username")
@@ -634,7 +550,7 @@ func protectedHandler(c *fiber.Ctx) error {
 }
 
 func createToken(username string) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
+	token := jwt.NewWithClaims(jwt.SigningMethodRS512,
 		jwt.MapClaims{
 			"username": username,
 			"exp":      time.Now().Add(time.Hour * 24).Unix(),
