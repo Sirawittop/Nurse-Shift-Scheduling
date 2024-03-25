@@ -3,7 +3,6 @@ import { useState } from 'react';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
-import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
@@ -12,14 +11,11 @@ import TablePagination from '@mui/material/TablePagination';
 
 import { users } from 'src/_mock/user';
 
-import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
-import TableNoData from '../table-no-data';
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
-import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
 // ----------------------------------------------------------------------
@@ -29,11 +25,9 @@ export default function UserPage() {
 
   const [order, setOrder] = useState('asc');
 
-  const [selected, setSelected] = useState([]);
 
   const [orderBy, setOrderBy] = useState('name');
 
-  const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -45,32 +39,8 @@ export default function UserPage() {
     }
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = users.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
-  };
+
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -81,35 +51,22 @@ export default function UserPage() {
     setRowsPerPage(parseInt(event.target.value, 10));
   };
 
-  const handleFilterByName = (event) => {
-    setPage(0);
-    setFilterName(event.target.value);
-  };
 
   const dataFiltered = applyFilter({
     inputData: users,
     comparator: getComparator(order, orderBy),
-    filterName,
   });
 
-  const notFound = !dataFiltered.length && !!filterName;
 
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Users</Typography>
+        <Typography variant="h4">จัดตารางเวร</Typography>
 
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          New User
-        </Button>
       </Stack>
 
       <Card>
-        <UserTableToolbar
-          numSelected={selected.length}
-          filterName={filterName}
-          onFilterName={handleFilterByName}
-        />
+        
 
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
@@ -118,16 +75,42 @@ export default function UserPage() {
                 order={order}
                 orderBy={orderBy}
                 rowCount={users.length}
-                numSelected={selected.length}
                 onRequestSort={handleSort}
-                onSelectAllClick={handleSelectAllClick}
                 headLabel={[
                   { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
-                  { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
-                  { id: '' },
+                  { id: 'day1', label: '1', align: 'center'},
+                  { id: 'day2', label: '2', align: 'center'},
+                  { id: 'day3', label: '3', align: 'center'},
+                  { id: 'day4', label: '4', align: 'center'},
+                  { id: 'day5', label: '5', align: 'center'},
+                  { id: 'day6', label: '6', align: 'center'},
+                  { id: 'day7', label: '7', align: 'center'},
+                  { id: 'day8', label: '8', align: 'center'},
+                  { id: 'day9', label: '9', align: 'center'},
+                  { id: 'day10', label: '10', align: 'center'},
+                  { id: 'day11', label: '11', align: 'center'},
+                  { id: 'day12', label: '12', align: 'center'},
+                  { id: 'day13', label: '13', align: 'center'},
+                  { id: 'day14', label: '14', align: 'center'},
+                  { id: 'day15', label: '15', align: 'center'},
+                  { id: 'day16', label: '16', align: 'center'},
+                  { id: 'day17', label: '17', align: 'center'},
+                  { id: 'day18', label: '18', align: 'center'},
+                  { id: 'day19', label: '19', align: 'center'},
+                  { id: 'day20', label: '20', align: 'center'},
+                  { id: 'day21', label: '21', align: 'center'},
+                  { id: 'day22', label: '22', align: 'center'},
+                  { id: 'day23', label: '23', align: 'center'},
+                  { id: 'day24', label: '24', align: 'center'},
+                  { id: 'day25', label: '25', align: 'center'},
+                  { id: 'day26', label: '26', align: 'center'},
+                  { id: 'day27', label: '27', align: 'center'},
+                  { id: 'day28', label: '28', align: 'center'},
+                  { id: 'day29', label: '29', align: 'center'},
+                  { id: 'day30', label: '30', align: 'center'},
+                  { id: 'day31', label: '31', align: 'center'},
+
+
                 ]}
               />
               <TableBody>
@@ -142,8 +125,6 @@ export default function UserPage() {
                       company={row.company}
                       avatarUrl={row.avatarUrl}
                       isVerified={row.isVerified}
-                      selected={selected.indexOf(row.name) !== -1}
-                      handleClick={(event) => handleClick(event, row.name)}
                     />
                   ))}
 
@@ -152,7 +133,6 @@ export default function UserPage() {
                   emptyRows={emptyRows(page, rowsPerPage, users.length)}
                 />
 
-                {notFound && <TableNoData query={filterName} />}
               </TableBody>
             </Table>
           </TableContainer>

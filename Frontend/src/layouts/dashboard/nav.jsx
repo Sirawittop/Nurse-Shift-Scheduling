@@ -23,7 +23,7 @@ import navConfig from './config-navigation';
 export default function Nav({ openNav, onCloseNav }) {
   const pathname = usePathname();
 
-  const upLg = useResponsive('up', 'xl');
+  const upLg = useResponsive('up', 'xxl');
 
   useEffect(() => {
     if (openNav) {
@@ -75,7 +75,7 @@ export default function Nav({ openNav, onCloseNav }) {
           sx={{
             height: 1,
             position: 'fixed',
-            width: 0,
+            width: NAV.WIDTH,
             borderRight: (theme) => `dashed 1px ${theme.palette.divider}`,
           }}
         >
