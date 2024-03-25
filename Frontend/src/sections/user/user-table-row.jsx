@@ -1,99 +1,132 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
-import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
-import MenuItem from '@mui/material/MenuItem';
 import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 export default function UserTableRow({
-  selected,
-  name,
   avatarUrl,
-  company,
-  role,
-  isVerified,
-  status,
+  name,
+  day1,
+  day2,
+  day3,
+  day4,
+  day5,
+  day6,
+  day7,
+  day8,
+  day9,
+  day10,
+  day11,
+  day12,
+  day13,
+  day14,
+  day15,
+  day16,
+  day17,
+  day18,
+  day19,
+  day20,
+  day21,
+  day22,
+  day23,
+  day24,
+  day25,
+  day26,
+  day27,
+  day28,
+  day29,
+  day30,
+  day31,
+
 }) {
-  const [open, setOpen] = useState(null);
-
-  const handleOpenMenu = (event) => {
-    setOpen(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setOpen(null);
-  };
 
   return (
-    <>
-      <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
+      <TableRow>
 
         <TableCell component="th" scope="row" padding="none">
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={name} src={avatarUrl} />
+          <Stack direction="row" alignItems="center"  spacing={2}>
+            <Avatar alt={name} src={avatarUrl} style={{ marginLeft: '15px' }}   />
             <Typography variant="subtitle2" noWrap>
               {name}
             </Typography>
           </Stack>
         </TableCell>
 
-        <TableCell>{company}</TableCell>
+        <TableCell>{day1}</TableCell>
+        <TableCell>{day2}</TableCell>
+        <TableCell>{day3}</TableCell>
+        <TableCell>{day4}</TableCell>
+        <TableCell>{day5}</TableCell>
+        <TableCell>{day6}</TableCell>
+        <TableCell>{day7}</TableCell>
+        <TableCell>{day8}</TableCell>
+        <TableCell>{day9}</TableCell>
+        <TableCell>{day10}</TableCell>
+        <TableCell>{day11}</TableCell>
+        <TableCell>{day12}</TableCell>
+        <TableCell>{day13}</TableCell>
+        <TableCell>{day14}</TableCell>
+        <TableCell>{day15}</TableCell>
+        <TableCell>{day16}</TableCell>
+        <TableCell>{day17}</TableCell>
+        <TableCell>{day18}</TableCell>
+        <TableCell>{day19}</TableCell>
+        <TableCell>{day20}</TableCell>
+        <TableCell>{day21}</TableCell>
+        <TableCell>{day22}</TableCell>
+        <TableCell>{day23}</TableCell>
+        <TableCell>{day24}</TableCell>
+        <TableCell>{day25}</TableCell>
+        <TableCell>{day26}</TableCell>
+        <TableCell>{day27}</TableCell>
+        <TableCell>{day28}</TableCell>
+        <TableCell>{day29}</TableCell>
+        <TableCell>{day30}</TableCell>
+        <TableCell>{day31}</TableCell>
 
-        <TableCell>{role}</TableCell>
-
-        <TableCell align="center">{isVerified ? 'Yes' : 'No'}</TableCell>
-
-        <TableCell>
-          <Label color={(status === 'banned' && 'error') || 'success'}>{status}</Label>
-        </TableCell>
-
-        <TableCell align="right">
-          <IconButton onClick={handleOpenMenu}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell>
       </TableRow>
 
-      <Popover
-        open={!!open}
-        anchorEl={open}
-        onClose={handleCloseMenu}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        PaperProps={{
-          sx: { width: 140 },
-        }}
-      >
-        <MenuItem onClick={handleCloseMenu}>
-          <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
-
-        <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
-          <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
-          Delete
-        </MenuItem>
-      </Popover>
-    </>
   );
 }
 
 UserTableRow.propTypes = {
   avatarUrl: PropTypes.any,
-  company: PropTypes.any,
-  isVerified: PropTypes.any,
   name: PropTypes.any,
-  role: PropTypes.any,
-  selected: PropTypes.any,
-  status: PropTypes.string,
+  day1: PropTypes.any,
+  day2: PropTypes.any,
+  day3: PropTypes.any,
+  day4: PropTypes.any,
+  day5: PropTypes.any,
+  day6: PropTypes.any,
+  day7: PropTypes.any,
+  day8: PropTypes.any,
+  day9: PropTypes.any,
+  day10: PropTypes.any,
+  day11: PropTypes.any,
+  day12: PropTypes.any,
+  day13: PropTypes.any,
+  day14: PropTypes.any,
+  day15: PropTypes.any,
+  day16: PropTypes.any,
+  day17: PropTypes.any,
+  day18: PropTypes.any,
+  day19: PropTypes.any,
+  day20: PropTypes.any,
+  day21: PropTypes.any,
+  day22: PropTypes.any,
+  day23: PropTypes.any,
+  day24: PropTypes.any,
+  day25: PropTypes.any,
+  day26: PropTypes.any,
+  day27: PropTypes.any,
+  day28: PropTypes.any,
+  day29: PropTypes.any,
+  day30: PropTypes.any,
+  day31: PropTypes.any,
 };

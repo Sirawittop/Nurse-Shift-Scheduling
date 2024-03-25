@@ -20,6 +20,8 @@ import { emptyRows, applyFilter, getComparator } from '../utils';
 
 // ----------------------------------------------------------------------
 
+
+
 export default function UserPage() {
   const [page, setPage] = useState(0);
 
@@ -118,13 +120,38 @@ export default function UserPage() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <UserTableRow
-                      key={row.id}
                       name={row.name}
-                      role={row.role}
-                      status={row.status}
-                      company={row.company}
-                      avatarUrl={row.avatarUrl}
-                      isVerified={row.isVerified}
+                      day1={row.day1}
+                      day2={row.day2}
+                      day3={row.day3}
+                      day4={row.day4}
+                      day5={row.day5}
+                      day6={row.day6}
+                      day7={row.day7}
+                      day8={row.day8}
+                      day9={row.day9}
+                      day10={row.day10}
+                      day11={row.day11}
+                      day12={row.day12}
+                      day13={row.day13}
+                      day14={row.day14}
+                      day15={row.day15}
+                      day16={row.day16}
+                      day17={row.day17}
+                      day18={row.day18}
+                      day19={row.day19}
+                      day20={row.day20}
+                      day21={row.day21}
+                      day22={row.day22}
+                      day23={row.day23}
+                      day24={row.day24}
+                      day25={row.day25}
+                      day26={row.day26}
+                      day27={row.day27}
+                      day28={row.day28}
+                      day29={row.day29}
+                      day30={row.day30}
+                      day31={row.day31}
                     />
                   ))}
 
