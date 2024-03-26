@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 
 import Stack from '@mui/material/Stack';
-import Avatar from '@mui/material/Avatar';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
@@ -10,6 +9,7 @@ import Typography from '@mui/material/Typography';
 // ----------------------------------------------------------------------
 
 export default function UserTableRow({
+  id,
   avatarUrl,
   name,
   day1,
@@ -47,55 +47,62 @@ export default function UserTableRow({
 }) {
 
   return (
-      <TableRow>
+    <TableRow>
 
-        <TableCell component="th" scope="row" padding="none">
-          <Stack direction="row" alignItems="center"  spacing={2}>
-            <Avatar alt={name} src={avatarUrl} style={{ marginLeft: '15px' }}   />
-            <Typography variant="subtitle2" noWrap>
-              {name}
-            </Typography>
-          </Stack>
-        </TableCell>
+      <TableCell>{id}</TableCell>
 
-        <TableCell>{day1}</TableCell>
-        <TableCell>{day2}</TableCell>
-        <TableCell>{day3}</TableCell>
-        <TableCell>{day4}</TableCell>
-        <TableCell>{day5}</TableCell>
-        <TableCell>{day6}</TableCell>
-        <TableCell>{day7}</TableCell>
-        <TableCell>{day8}</TableCell>
-        <TableCell>{day9}</TableCell>
-        <TableCell>{day10}</TableCell>
-        <TableCell>{day11}</TableCell>
-        <TableCell>{day12}</TableCell>
-        <TableCell>{day13}</TableCell>
-        <TableCell>{day14}</TableCell>
-        <TableCell>{day15}</TableCell>
-        <TableCell>{day16}</TableCell>
-        <TableCell>{day17}</TableCell>
-        <TableCell>{day18}</TableCell>
-        <TableCell>{day19}</TableCell>
-        <TableCell>{day20}</TableCell>
-        <TableCell>{day21}</TableCell>
-        <TableCell>{day22}</TableCell>
-        <TableCell>{day23}</TableCell>
-        <TableCell>{day24}</TableCell>
-        <TableCell>{day25}</TableCell>
-        <TableCell>{day26}</TableCell>
-        <TableCell>{day27}</TableCell>
-        <TableCell>{day28}</TableCell>
-        <TableCell>{day29}</TableCell>
-        <TableCell>{day30}</TableCell>
-        <TableCell>{day31}</TableCell>
+      <TableCell component="th" scope="row" padding="none">
+        <Stack direction="row" alignItems="center" spacing={2}>
+          <Typography variant="subtitle2" noWrap>
+            {name}
+          </Typography>
+        </Stack>
+      </TableCell>
+      <TableCell>
+        <Stack direction="row" alignItems="center">
+        <Typography variant="inherit" noWrap>
+          {day1}
+          </Typography>
+        </Stack>
+      </TableCell>
+      <TableCell>{day2}</TableCell>
+      <TableCell>{day3}</TableCell>
+      <TableCell>{day4}</TableCell>
+      <TableCell>{day5}</TableCell>
+      <TableCell>{day6}</TableCell>
+      <TableCell>{day7}</TableCell>
+      <TableCell>{day8}</TableCell>
+      <TableCell>{day9}</TableCell>
+      <TableCell>{day10}</TableCell>
+      <TableCell>{day11}</TableCell>
+      <TableCell>{day12}</TableCell>
+      <TableCell>{day13}</TableCell>
+      <TableCell>{day14}</TableCell>
+      <TableCell>{day15}</TableCell>
+      <TableCell>{day16}</TableCell>
+      <TableCell>{day17}</TableCell>
+      <TableCell>{day18}</TableCell>
+      <TableCell>{day19}</TableCell>
+      <TableCell>{day20}</TableCell>
+      <TableCell>{day21}</TableCell>
+      <TableCell>{day22}</TableCell>
+      <TableCell>{day23}</TableCell>
+      <TableCell>{day24}</TableCell>
+      <TableCell>{day25}</TableCell>
+      <TableCell>{day26}</TableCell>
+      <TableCell>{day27}</TableCell>
+      <TableCell>{day28}</TableCell>
+      <TableCell>{day29}</TableCell>
+      <TableCell>{day30}</TableCell>
+      <TableCell>{day31}</TableCell>
 
-      </TableRow>
+    </TableRow>
 
   );
 }
 
 UserTableRow.propTypes = {
+  id: PropTypes.any,
   avatarUrl: PropTypes.any,
   name: PropTypes.any,
   day1: PropTypes.any,

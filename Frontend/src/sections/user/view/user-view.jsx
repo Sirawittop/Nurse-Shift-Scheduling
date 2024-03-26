@@ -28,7 +28,7 @@ export default function UserPage() {
   const [order, setOrder] = useState('asc');
 
 
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] = useState('id');
 
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -79,7 +79,8 @@ export default function UserPage() {
                 rowCount={users.length}
                 onRequestSort={handleSort}
                 headLabel={[
-                  { id: 'name', label: 'Name' },
+                  { id: 'id', label: 'ที่'},
+                  { id: 'name', label: 'ชื่อ-สกุล' },
                   { id: 'day1', label: '1', align: 'center'},
                   { id: 'day2', label: '2', align: 'center'},
                   { id: 'day3', label: '3', align: 'center'},
@@ -120,6 +121,7 @@ export default function UserPage() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <UserTableRow
+                      id={row.id}
                       name={row.name}
                       day1={row.day1}
                       day2={row.day2}
