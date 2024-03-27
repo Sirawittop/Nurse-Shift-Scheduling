@@ -58,13 +58,7 @@ export default function UserTableRow({
           </Typography>
         </Stack>
       </TableCell>
-      <TableCell>
-        <Stack direction="row" alignItems="center">
-        <Typography variant="inherit" noWrap>
-          {day1}
-          </Typography>
-        </Stack>
-      </TableCell>
+      <TableCell>{day1}</TableCell>
       <TableCell>{day2}</TableCell>
       <TableCell>{day3}</TableCell>
       <TableCell>{day4}</TableCell>
